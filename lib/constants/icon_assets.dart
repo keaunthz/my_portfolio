@@ -37,4 +37,9 @@ class IconAssets {
   static String newsIcon = 'assets/icons/news_icon.svg';
   static String giftIcon = 'assets/icons/gift_icon.svg';
   static String warningIcon = 'assets/icons/warning_circle_icon.svg';
+  static String entertainmentIcon = 'assets/icons/entertainment_icon.svg';
+  static String healthIcon = 'assets/icons/health_icon.svg';
+  static String hamburgerIcon = 'assets/icons/hamburger_icon.svg';
+  static String houseIcon = 'assets/icons/house_icon.svg';
+  static String promotionIcon = 'assets/icons/promotion_icon.svg';
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:portfolio/constants/icon_assets.dart';
 import 'package:portfolio/projects/top_radio/utils/app_colors.dart';
 import 'package:portfolio/projects/top_radio/utils/enum.dart';
 
@@ -17,31 +19,31 @@ class _ActivityWidgetState extends State<ActivityWidget> {
   final List<TagModel> _activities = [
     TagModel(
       tag: CategoryTagEnum.entertainment,
-      imgAssetPath: "icons/entertainment.png",
+      imgAssetPath: IconAssets.entertainmentIcon,
       color: const Color(0xFFFCE8D2),
       isSelected: false,
     ),
     TagModel(
       tag: CategoryTagEnum.health,
-      imgAssetPath: "icons/health.png",
+      imgAssetPath: IconAssets.healthIcon,
       color: const Color(0xFFD2FCED),
       isSelected: false,
     ),
     TagModel(
       tag: CategoryTagEnum.food,
-      imgAssetPath: "icons/food.png",
+      imgAssetPath: IconAssets.hamburgerIcon,
       color: const Color(0xFFFFD43C),
       isSelected: false,
     ),
     TagModel(
       tag: CategoryTagEnum.houseWork,
-      imgAssetPath: "icons/house_work.png",
+      imgAssetPath: IconAssets.houseIcon,
       color: const Color(0xFFFCD2E4),
       isSelected: false,
     ),
     TagModel(
       tag: CategoryTagEnum.promotion,
-      imgAssetPath: "icons/promotion.png",
+      imgAssetPath: IconAssets.promotionIcon,
       color: const Color(0xFFFFBEC7),
       isSelected: false,
     ),
@@ -104,11 +106,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                 height: 22,
                 child: AspectRatio(
                   aspectRatio: 1,
-                  child: Image.asset(
-                    item.imgAssetPath ?? "",
-                    errorBuilder:
-                        (context, error, stackTrace) => const Icon(Icons.error),
-                  ),
+                  child: SvgPicture.asset(item.imgAssetPath ?? ""),
                 ),
               ),
               const Gap(14),
