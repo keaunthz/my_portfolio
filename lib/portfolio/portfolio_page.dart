@@ -11,6 +11,7 @@ import 'package:portfolio/portfolio/widgets/vertical_divider_widget.dart';
 import 'package:portfolio/projects/top_radio/services/audio_service.dart';
 import 'package:portfolio/themes/bringoo_colors.dart';
 import 'package:portfolio/themes/bringoo_typography.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PortfolioHomePage extends StatefulWidget {
   const PortfolioHomePage({super.key});
@@ -60,26 +61,46 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          Portfolio.name,
-                          style: BringooTypoGraphy.captionSemiBold(
-                            context,
-                          ).copyWith(
-                            fontSize: 16,
-                            color: BringooColors.darkBlue,
+                        TextButton(
+                          onPressed: () => _scrollToSection(_contactKey),
+                          child: Text(
+                            Portfolio.name,
+                            style: BringooTypoGraphy.captionSemiBold(
+                              context,
+                            ).copyWith(
+                              fontSize: 16,
+                              color: BringooColors.darkBlue,
+                            ),
                           ),
                         ),
                         Row(
                           children: [
-                            TextButton(
-                              onPressed: () => _scrollToSection(_contactKey),
-                              child: Text(
-                                Portfolio.contact,
-                                style: BringooTypoGraphy.captionSemiBold(
-                                  context,
-                                ).copyWith(
-                                  fontSize: 14,
-                                  color: BringooColors.darkBlue,
+                            InkWell(
+                              highlightColor: Colors.transparent,
+                              onTap: () async {
+                                const url =
+                                    'https://drive.google.com/file/d/17IsOjbaCRtVdzB33s-3xp--LvdaS9Ijm/view';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(
+                                    Uri.parse(url),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: BringooColors.oceanTeal,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Text(
+                                  "Download my CV",
+                                  style: BringooTypoGraphy.captionSemiBold(
+                                    context,
+                                  ).copyWith(fontSize: 14, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -522,7 +543,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
     child: InkWell(
       borderRadius: BorderRadius.circular(15),
-      onTap: () => _showProjectDialog(project, isMobile),
+      onTap: () => _showProjectDialog(project),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -568,95 +589,103 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
     ),
   );
 
-  void _showProjectDialog(Project project, bool isMobile) {
+  void _showProjectDialog(Project project) {
     final audioService = AudioService();
+
     showDialog(
       context: context,
       useRootNavigator: true,
       builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          insetPadding: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.9,
-                maxWidth:
-                    isMobile
-                        ? MediaQuery.of(context).size.width * 0.9
-                        : MediaQuery.of(context).size.width * 0.7,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isMobile = constraints.maxWidth < 1000;
+
+            return Dialog(
+              backgroundColor: Colors.white,
+              insetPadding: const EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              child: Column(
-                children: [
-                  Row(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.9,
+                    maxWidth:
+                        isMobile
+                            ? MediaQuery.of(context).size.width * 0.9
+                            : MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  child: Column(
                     children: [
-                      Text(
-                        project.projectName,
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: BringooColors.oceanTeal.shade900,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            project.projectName,
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w900,
+                              color: BringooColors.oceanTeal.shade900,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
                       ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
+                      const SizedBox(height: 8),
+                      Divider(thickness: 1, color: BringooColors.oceanTeal),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child:
+                              isMobile
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      ProjectDetailWidget(project: project),
+                                      const SizedBox(height: 20),
+                                      _buildLivePreview(
+                                        context,
+                                        audioService,
+                                        project,
+                                      ),
+                                    ],
+                                  )
+                                  : IntrinsicHeight(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Expanded(
+                                          child: ProjectDetailWidget(
+                                            project: project,
+                                          ),
+                                        ),
+                                        VerticalDividerWidget(),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: _buildLivePreview(
+                                              context,
+                                              audioService,
+                                              project,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Divider(thickness: 1, color: BringooColors.oceanTeal),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child:
-                          isMobile
-                              ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  ProjectDetailWidget(project: project),
-                                  const SizedBox(height: 20),
-                                  _buildLivePreview(
-                                    context,
-                                    audioService,
-                                    project,
-                                  ),
-                                ],
-                              )
-                              : IntrinsicHeight(
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Expanded(
-                                      child: ProjectDetailWidget(
-                                        project: project,
-                                      ),
-                                    ),
-                                    VerticalDividerWidget(),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: _buildLivePreview(
-                                          context,
-                                          audioService,
-                                          project,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     ).then((_) async => await audioService.disposePlayer());
