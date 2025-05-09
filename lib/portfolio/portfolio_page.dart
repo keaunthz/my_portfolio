@@ -359,7 +359,7 @@ class _PortfolioHomePageState extends State<PortfolioHomePage> {
 
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Sep 2021-Feb 2022',
+                                  'Mar 2022-May 2022',
                                   style: TextStyle(
                                     color: BringooColors.oceanTeal.shade900,
                                   ),
